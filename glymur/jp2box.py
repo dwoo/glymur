@@ -3389,8 +3389,11 @@ class UUIDBox(Jp2kBox):
         elif self.uuid == _GEOTIFF_UUID:
             self.data = tiff_header(self.raw_data)
         elif self.uuid == _EXIF_UUID:
-            # Cut off 'EXIF\0\0' part.
-            self.data = tiff_header(self.raw_data[6:])
+            if self.raw_data[0:4].decode('utf-8').lower() == 'exif':
+                # Cut off 'EXIF\0\0' part.
+                self.data = tiff_header(self.raw_data[6:])
+            else:
+                self.data = tiff_header(self.raw_data)
         else:
             self.data = self.raw_data
 
